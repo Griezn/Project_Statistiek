@@ -7,9 +7,13 @@ attach(airbnb)
 #============================#
 # realSum -> continue
 # rechtsscheef, met een zware staart. 8000 is een outlier
+# Ook duidelijk te zien op de bloxplot
 hist(realSum)
+boxplot(realSum)
 # zonder outliers, nog steeds rechtsscheef
-hist(realSum, xlim = range(0, 3000), breaks = 16)
+realSum2 <- realSum[realSum < 3000]
+hist(realSum2, breaks = 16)
+boxplot(realSum2)
 
 summary(realSum)
 #   Min.   | 1st Qu. | Median | Mean   | 3rd Qu.  | Max.
@@ -50,6 +54,7 @@ summary(bedrooms)
 # distance -> continue
 # rechtsscheef, met een zware staart.
 hist(dist)
+boxplot(dist)
 
 summary(dist)
 #   Min.    | 1st Qu. | Median  | Mean    | 3rd Qu. | Max.
@@ -59,6 +64,7 @@ summary(dist)
 # metro -> continue
 # rechtsscheef, met een lichte staart.
 hist(metro)
+boxplot(metro)
 
 summary(metro)
 #   Min.    | 1st Qu. | Median  | Mean    | 3rd Qu. | Max.
@@ -68,6 +74,7 @@ summary(metro)
 # rest -> continue
 # rechtsscheef, met een lichte staart.
 hist(rest)
+boxplot(rest)
 
 summary(rest)
 #   Min.  | 1st Qu. | Median | Mean  | 3rd Qu. | Max.
