@@ -121,4 +121,7 @@ wilcox.test(volledig, afzonderlijk, paired = FALSE) # W = 1.9e+05, p = 2.2e-16
 # Nu gaan we na of er afhankelijkheid is tussen de totalen en de verschillende variabelen
 
 # is er correlatie tussen de totale kost en de variable room
+# Room is een nominale veranderlijke dus met kruistabel
+shapiro.test(realSum)
+
 
