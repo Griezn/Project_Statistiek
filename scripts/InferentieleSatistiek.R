@@ -130,3 +130,19 @@ table(realSumKlassen, room2)
 chisq.test(realSumKlassen, room2) # p-value = 4.76e-12 -> p-waarde zeer klein , zeer afhankelijk
 chisq.test(realSumKlassen, room2)$expected
 chisq.test(realSumKlassen, room2)$residuals
+
+# is er correlatie tussen de totale kost en de variable capacity
+# capacity is een ordinale veranderlijke dus met kruistabel
+realSumKlassen = cut(realSum, breaks = c(0, 300, 350, 400,450, 500, 600, 700, 800, 9000))
+capacity2 = as.character(capacity)
+capacity2[capacity2==6] = 4
+capacity2[capacity2==5] = 4
+
+table(realSumKlassen, capacity2)
+
+cor.test(realSum, capacity2, method="spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+
+chisq.test(realSumKlassen, capacity2) # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+chisq.test(realSumKlassen, capacity2)$expected
+chisq.test(realSumKlassen, capacity2)$residuals
+
