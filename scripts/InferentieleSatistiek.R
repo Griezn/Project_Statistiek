@@ -1,5 +1,5 @@
 # laad dataset
-load("./data/airbnb.RData")
+load("C:/Users/r0951309/IdeaProjects/Project_Statistiek/data/airbnb.RData")
 attach(airbnb)
 
 #==== KENMERKEN VD STEEKPROEF ====#
@@ -122,6 +122,11 @@ wilcox.test(volledig, afzonderlijk, paired = FALSE) # W = 1.9e+05, p = 2.2e-16
 
 # is er correlatie tussen de totale kost en de variable room
 # Room is een nominale veranderlijke dus met kruistabel
-shapiro.test(realSum)
+realSumKlassen = cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
+room2 = as.character(room)
+room2[room2=="gedeeld"] = "afzonderlijk"
+table(realSumKlassen, room2)
 
-
+chisq.test(realSumKlassen, room2) # p-value = 4.76e-12 -> p-waarde zeer klein , zeer afhankelijk
+chisq.test(realSumKlassen, room2)$expected
+chisq.test(realSumKlassen, room2)$residuals
