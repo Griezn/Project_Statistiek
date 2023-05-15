@@ -1,5 +1,6 @@
 # laad dataset
 load("C:/Users/r0951309/IdeaProjects/Project_Statistiek/data/airbnb.RData")
+load("./data/airbnb.RData")
 attach(airbnb)
 
 #==== KENMERKEN VD STEEKPROEF ====#
@@ -25,8 +26,14 @@ binom.test(part, length(realSum), 0.5)
 
 
 # controle als het aantal beschikbare kamers de poissonverdeling volgt
-#TODO
+lambda <- median(bedrooms)
+expected_freq <- dpois(0:5, lambda) / sum(expected_freq)
+observed_freq <- table(bedrooms)
 
+chisq.test(observed_freq, p = expected_freq) # p-value < 2.2e-16
+chisq.test(observed_freq, p = expected_freq)$expected
+# p-waarde is zeer klein dus de h0 wordt verworpen, het aantal beschikbare kamers volgt niet de poissonverdeling
+# de expected values bij 0 zijn veel te hoog en bij 1 veel te laag, de andere waarden zijn ongeveer gelijk
 
 #==== GEMIDDELDE KOST ====#
 
@@ -121,28 +128,113 @@ wilcox.test(volledig, afzonderlijk, paired = FALSE) # W = 1.9e+05, p = 2.2e-16
 # Nu gaan we na of er afhankelijkheid is tussen de totalen en de verschillende variabelen
 
 # is er correlatie tussen de totale kost en de variable room
+# realSum
 # Room is een nominale veranderlijke dus met kruistabel
-realSumKlassen = cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
-room2 = as.character(room)
-room2[room2=="gedeeld"] = "afzonderlijk"
+realSumKlassen <- cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
+# Afzonderlijk en gedeeld moet worden samengenomen om te voldoen aan de cochran regel
+room2 <- as.character(room)
+room2[room2=="gedeeld"] <- "afzonderlijk"
 table(realSumKlassen, room2)
 
 chisq.test(realSumKlassen, room2) # p-value = 4.76e-12 -> p-waarde zeer klein , zeer afhankelijk
-chisq.test(realSumKlassen, room2)$expected
+chisq.test(realSumKlassen, room2)$expected # laagste excpected value = 4.777 dus dicht genoeg bij de 5
 chisq.test(realSumKlassen, room2)$residuals
+# De gegevens tonen afhankelijkheid tussen beide veranderlijken (zeer significant)
+
 
 # is er correlatie tussen de totale kost en de variable capacity
 # capacity is een ordinale veranderlijke dus met kruistabel
-realSumKlassen = cut(realSum, breaks = c(0, 300, 350, 400,450, 500, 600, 700, 800, 9000))
-capacity2 = as.character(capacity)
+realSumKlassen <- cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
+capacity2 = capacity
 capacity2[capacity2==6] = 4
 capacity2[capacity2==5] = 4
 
-table(realSumKlassen, capacity2)
 
-cor.test(realSum, capacity2, method="spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+table(realSumKlassen, capacity2)
 
 chisq.test(realSumKlassen, capacity2) # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 chisq.test(realSumKlassen, capacity2)$expected
-chisq.test(realSumKlassen, capacity2)$residuals
+chisq.test(realSumKlassen, capacity2)$residuals # nolint
 
+
+# is er correlatie tussen de totale kost en de variable bedrooms
+# bedrooms is een ordinale veranderlijke en er zijn ties dus met kruistabel
+realSumKlassen <- cut(realSum, breaks = c(0, 300, 400, 500, 600, 700, 800, 1000, 9000))
+
+bedrooms2 = bedrooms
+bedrooms2[bedrooms2==5] = 2
+bedrooms2[bedrooms2==4] = 2
+bedrooms2[bedrooms2==3] = 2
+
+table(realSumKlassen, bedrooms2)
+
+chisq.test(realSumKlassen, bedrooms2) # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+chisq.test(realSumKlassen, bedrooms2)$expected
+chisq.test(realSumKlassen, bedrooms2)$residuals
+
+
+# is er correlatie tussen de totale kost en de variable distance
+# distance is een continue veranderlijke dus eerst testen op normaliteit
+shapiro.test(dist) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
+# dus gebruiken we de spearman correlatie
+cor.test(realSum, dist, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+
+
+# is er correlatie tussen de totale kost en de variable metro
+# metro is een continue veranderlijke dus eerst testen op normaliteit
+shapiro.test(metro) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
+# dus gebruiken we de spearman correlatie
+cor.test(realSum, metro, method = "spearman") # p-value = 9.476e-10 -> p-waarde zeer klein , zeer afhankelijk
+
+
+# is er correlatie tussen de totale kost en de variable attractions
+# attractions is een continue veranderlijke dus eerst testen op normaliteit
+shapiro.test(attr) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
+# dus gebruiken we de spearman correlatie
+cor.test(realSum, attr, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+
+
+# is er correlatie tussen de totale kost en de variable restaurants
+# restaurants is een continue veranderlijke dus eerst testen op normaliteit
+shapiro.test(rest) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
+# dus gebruiken we de spearman correlatie
+cor.test(realSum, rest, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
+
+
+# is er correlatie tussen de totale kost en de variable host
+# host is een ordinale veranderlijke en er zijn ties dus met kruistabel
+realSumKlassen <- cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
+meerdere <- as.character(host)
+meerdere[meerdere=="2 tot 4"] = "meerdere"
+meerdere[meerdere=="meer dan 4"] = "meerdere"
+
+table(realSumKlassen, meerdere)
+
+chisq.test(realSumKlassen, meerdere) # p-value = 0.0023 -> p-waarde is niet zo klein , een beetje afhankelijk
+chisq.test(realSumKlassen, meerdere)$expected
+chisq.test(realSumKlassen, meerdere)$residuals
+
+
+# is er correlatie tussen de totale kost en de variable cleanliness
+# cleanlines is een ordinale veranderlijke en er zijn ties dus met kruistabel
+realSumKlassen <- cut(realSum, breaks = c(0, 300, 400, 500, 600, 700, 800, 1000, 9000))
+cleanliness2 <- cleanliness
+cleanliness2[cleanliness2==2] <- 8
+cleanliness2[cleanliness2==3] <- 8
+cleanliness2[cleanliness2==4] <- 8
+cleanliness2[cleanliness2==5] <- 8
+cleanliness2[cleanliness2==6] <- 8
+cleanliness2[cleanliness2==7] <- 8
+
+table(realSumKlassen, cleanliness2)
+
+chisq.test(realSumKlassen, cleanliness2) # p-value = 0.01148 -> p-waarde is ongeveer 1%, een beetje afhankelijk
+chisq.test(realSumKlassen, cleanliness2)$expected
+chisq.test(realSumKlassen, cleanliness2)$residuals
+
+
+# is er correlatie tussen de totale kost en de variable satisfaction
+# satisfaction is een continue veranderlijke dus eerst testen op normaliteit
+shapiro.test(satisfaction) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
+# dus gebruiken we de spearman correlatie
+cor.test(realSum, satisfaction, method = "spearman") # p-value = 1.657e-07 -> p-waarde zeer klein , zeer afhankelijk
