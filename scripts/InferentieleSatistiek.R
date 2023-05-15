@@ -238,3 +238,60 @@ chisq.test(realSumKlassen, cleanliness2)$residuals
 shapiro.test(satisfaction) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, satisfaction, method = "spearman") # p-value = 1.657e-07 -> p-waarde zeer klein , zeer afhankelijk
+
+
+#==== REGRESIE ====#
+# kost in functie van de acctractie score
+model <- lm(realSum ~ attr); summary(model)
+#Coefficients:
+#            Estimate Std. Error t value Pr(>|t|)
+#(Intercept)   338.93      33.49   10.12   <2e-16 ***
+#attr          126.58      14.55    8.70   <2e-16 ***
+
+#Residual standard error: 427.6 on 975 degrees of freedom
+#Multiple R-squared:  0.07204,   Adjusted R-squared:  0.07109
+#F-statistic: 75.69 on 1 and 975 DF,  p-value: < 2.2e-16
+plot(model)
+abline(model, col='red')
+
+logmodel <- lm(log10(realSum) ~ log10(attr)); summary(logmodel)
+#Coefficients:
+#            Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  2.55138    0.01312  194.44   <2e-16 ***
+#log10(attr)  0.56912    0.03943   14.43   <2e-16 ***
+
+#Multiple R-squared:  0.176,     Adjusted R-squared:  0.1752
+#F-statistic: 208.3 on 1 and 975 DF,  p-value: < 2.2e-16
+plot(logmodel)
+abline(logmodel, col='red')
+
+
+# meervoudig regressiemodel
+model <- lm(realSum ~ dist + attr + metro + rest + satisfaction); summary(model)
+#Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)   -186.99     211.08  -0.886 0.375899
+#dist           -29.64      10.15  -2.919 0.003590 **
+#attr            69.97      27.49   2.546 0.011063 *
+#metro          -12.81      18.53  -0.691 0.489666    
+#rest             5.08      16.57   0.307 0.759213
+#satisfaction    76.60      20.45   3.745 0.000191 ***
+
+model <- update(model, ~.-rest); summary(model)
+#Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)
+#(Intercept)  -175.316    207.519  -0.845 0.398420
+#dist          -31.019      9.103  -3.408 0.000682 ***
+#attr           75.706     20.120   3.763 0.000178 ***
+#metro         -13.668     18.310  -0.746 0.455561
+#satisfaction   76.363     20.429   3.738 0.000196 ***
+
+model <- update(model, ~.-metro); summary(model)
+#Coefficients:
+#             Estimate Std. Error t value Pr(>|t|)    
+#(Intercept)  -190.900    206.419  -0.925 0.355290
+#dist          -31.985      9.008  -3.551 0.000402 ***
+#attr           79.480     19.470   4.082 4.83e-05 ***
+#satisfaction   75.886     20.415   3.717 0.000213 ***
+
+plot(model)
