@@ -1,6 +1,6 @@
 # laad dataset
 load("C:/Users/r0951309/IdeaProjects/Project_Statistiek/data/airbnb.RData")
-load("./data/airbnb.RData")
+load("./Project statistiek/data/airbnb.RData")
 attach(airbnb)
 
 #==== KENMERKEN VD STEEKPROEF ====#
@@ -251,8 +251,15 @@ model <- lm(realSum ~ attr); summary(model)
 #Residual standard error: 427.6 on 975 degrees of freedom
 #Multiple R-squared:  0.07204,   Adjusted R-squared:  0.07109
 #F-statistic: 75.69 on 1 and 975 DF,  p-value: < 2.2e-16
-plot(model)
+betrouwbh = predict(model, interval = "confidence", level = 0.95)
+predictie = predict(model, interval = "prediction", level = 0.95)
+plot(realSum ~ attr)
 abline(model, col='red')
+x_i = model$model[,2]
+lines(sort(x_i), betrouwbh[order(x_i), 2], col='blue')
+lines(sort(x_i), betrouwbh[order(x_i), 3], col='blue')
+lines(sort(x_i), predictie[order(x_i), 2], col='green')
+lines(sort(x_i), predictie[order(x_i), 3], col='green')
 
 logmodel <- lm(log10(realSum) ~ log10(attr)); summary(logmodel)
 #Coefficients:
@@ -262,8 +269,15 @@ logmodel <- lm(log10(realSum) ~ log10(attr)); summary(logmodel)
 
 #Multiple R-squared:  0.176,     Adjusted R-squared:  0.1752
 #F-statistic: 208.3 on 1 and 975 DF,  p-value: < 2.2e-16
-plot(logmodel)
+betrouwbh = predict(logmodel, interval = "confidence", level = 0.95)
+predictie = predict(logmodel, interval = "prediction", level = 0.95)
+plot(log10(realSum) ~ log10(attr))
 abline(logmodel, col='red')
+x_i = logmodel$model[,2]
+lines(sort(x_i), betrouwbh[order(x_i), 2], col='blue')
+lines(sort(x_i), betrouwbh[order(x_i), 3], col='blue')
+lines(sort(x_i), predictie[order(x_i), 2], col='green')
+lines(sort(x_i), predictie[order(x_i), 3], col='green')
 
 
 # meervoudig regressiemodel
@@ -295,3 +309,4 @@ model <- update(model, ~.-metro); summary(model)
 #satisfaction   75.886     20.415   3.717 0.000213 ***
 
 plot(model)
+
