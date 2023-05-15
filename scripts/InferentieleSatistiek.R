@@ -310,3 +310,6 @@ model <- update(model, ~.-metro); summary(model)
 
 plot(model)
 
+logmodel <- lm(log10(realSum) ~ log10(dist) + log10(attr) + satisfaction); summary(logmodel)
+plot(logmodel)
+
