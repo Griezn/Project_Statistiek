@@ -1,6 +1,6 @@
 # laad dataset
 load("C:/Users/r0951309/IdeaProjects/Project_Statistiek/data/airbnb.RData")
-load("./Project statistiek/data/airbnb.RData")
+load("./data/airbnb.RData")
 attach(airbnb)
 
 #==== KENMERKEN VD STEEKPROEF ====#
@@ -141,36 +141,41 @@ chisq.test(realSumKlassen, room2)$expected # laagste excpected value = 4.777 dus
 chisq.test(realSumKlassen, room2)$residuals
 # De gegevens tonen afhankelijkheid tussen beide veranderlijken (zeer significant)
 
+plot(log10(realSum) ~ room)
 
 # is er correlatie tussen de totale kost en de variable capacity
 # capacity is een ordinale veranderlijke dus met kruistabel
 realSumKlassen <- cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
-capacity2 = capacity
-capacity2[capacity2==6] = 4
-capacity2[capacity2==5] = 4
+capacity2 <- capacity
+capacity2[capacity2==6] <- 4
+capacity2[capacity2==5] <- 4
 
 
 table(realSumKlassen, capacity2)
 
 chisq.test(realSumKlassen, capacity2) # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 chisq.test(realSumKlassen, capacity2)$expected
-chisq.test(realSumKlassen, capacity2)$residuals # nolint
+chisq.test(realSumKlassen, capacity2)$residuals
+
+boxplot(log10(realSum) ~ capacity)
 
 
 # is er correlatie tussen de totale kost en de variable bedrooms
 # bedrooms is een ordinale veranderlijke en er zijn ties dus met kruistabel
 realSumKlassen <- cut(realSum, breaks = c(0, 300, 400, 500, 600, 700, 800, 1000, 9000))
 
-bedrooms2 = bedrooms
-bedrooms2[bedrooms2==5] = 2
-bedrooms2[bedrooms2==4] = 2
-bedrooms2[bedrooms2==3] = 2
+bedrooms2 <- bedrooms
+bedrooms2[bedrooms2==5] <- 2
+bedrooms2[bedrooms2==4] <- 2
+bedrooms2[bedrooms2==3] <- 2
 
 table(realSumKlassen, bedrooms2)
 
 chisq.test(realSumKlassen, bedrooms2) # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 chisq.test(realSumKlassen, bedrooms2)$expected
 chisq.test(realSumKlassen, bedrooms2)$residuals
+
+boxplot(log10(realSum) ~ bedrooms)
 
 
 # is er correlatie tussen de totale kost en de variable distance
@@ -179,12 +184,17 @@ shapiro.test(dist) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal ver
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, dist, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 
+plot(log10(realSum) ~ dist)
+abline(lm(log10(realSum) ~ dist), col = "red")
 
 # is er correlatie tussen de totale kost en de variable metro
 # metro is een continue veranderlijke dus eerst testen op normaliteit
 shapiro.test(metro) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, metro, method = "spearman") # p-value = 9.476e-10 -> p-waarde zeer klein , zeer afhankelijk
+
+plot(log10(realSum) ~ metro)
+abline(lm(log10(realSum) ~ metro), col = "red")
 
 
 # is er correlatie tussen de totale kost en de variable attractions
@@ -193,6 +203,9 @@ shapiro.test(attr) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal ver
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, attr, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 
+plot(log10(realSum) ~ log10(attr))
+abline(lm(log10(realSum) ~ log10(attr)), col = "red")
+
 
 # is er correlatie tussen de totale kost en de variable restaurants
 # restaurants is een continue veranderlijke dus eerst testen op normaliteit
@@ -200,19 +213,24 @@ shapiro.test(rest) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal ver
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, rest, method = "spearman") # p-value < 2.2e-16 -> p-waarde zeer klein , zeer afhankelijk
 
+plot(log10(realSum) ~ rest)
+abline(lm(log10(realSum) ~ rest), col = "red")
+
 
 # is er correlatie tussen de totale kost en de variable host
 # host is een ordinale veranderlijke en er zijn ties dus met kruistabel
 realSumKlassen <- cut(realSum, breaks = c(0, 200, 300, 400, 500, 600, 700, 800, 1000, 2000, 9000))
 meerdere <- as.character(host)
-meerdere[meerdere=="2 tot 4"] = "meerdere"
-meerdere[meerdere=="meer dan 4"] = "meerdere"
+meerdere[meerdere=="2 tot 4"] <- "meerdere"
+meerdere[meerdere=="meer dan 4"] <- "meerdere"
 
 table(realSumKlassen, meerdere)
 
 chisq.test(realSumKlassen, meerdere) # p-value = 0.0023 -> p-waarde is niet zo klein , een beetje afhankelijk
 chisq.test(realSumKlassen, meerdere)$expected
 chisq.test(realSumKlassen, meerdere)$residuals
+
+plot(log10(realSum) ~ host)
 
 
 # is er correlatie tussen de totale kost en de variable cleanliness
@@ -232,12 +250,17 @@ chisq.test(realSumKlassen, cleanliness2) # p-value = 0.01148 -> p-waarde is onge
 chisq.test(realSumKlassen, cleanliness2)$expected
 chisq.test(realSumKlassen, cleanliness2)$residuals
 
+boxplot(log10(realSum) ~ cleanliness2)
+
 
 # is er correlatie tussen de totale kost en de variable satisfaction
 # satisfaction is een continue veranderlijke dus eerst testen op normaliteit
 shapiro.test(satisfaction) # p-value < 2.2e-16 -> p-waarde zeer klein , niet normaal verdeeld
 # dus gebruiken we de spearman correlatie
 cor.test(realSum, satisfaction, method = "spearman") # p-value = 1.657e-07 -> p-waarde zeer klein , zeer afhankelijk
+
+plot(log10(realSum) ~ exp(satisfaction))
+abline(lm(log10(realSum) ~ exp(satisfaction)), col = "red")
 
 
 #==== REGRESIE ====#
@@ -251,11 +274,11 @@ model <- lm(realSum ~ attr); summary(model)
 #Residual standard error: 427.6 on 975 degrees of freedom
 #Multiple R-squared:  0.07204,   Adjusted R-squared:  0.07109
 #F-statistic: 75.69 on 1 and 975 DF,  p-value: < 2.2e-16
-betrouwbh = predict(model, interval = "confidence", level = 0.95)
-predictie = predict(model, interval = "prediction", level = 0.95)
+betrouwbh <- predict(model, interval = "confidence", level = 0.95)
+predictie <- predict(model, interval = "prediction", level = 0.95)
 plot(realSum ~ attr)
 abline(model, col='red')
-x_i = model$model[,2]
+x_i <- model$model[, 2]
 lines(sort(x_i), betrouwbh[order(x_i), 2], col='blue')
 lines(sort(x_i), betrouwbh[order(x_i), 3], col='blue')
 lines(sort(x_i), predictie[order(x_i), 2], col='green')
@@ -269,11 +292,11 @@ logmodel <- lm(log10(realSum) ~ log10(attr)); summary(logmodel)
 
 #Multiple R-squared:  0.176,     Adjusted R-squared:  0.1752
 #F-statistic: 208.3 on 1 and 975 DF,  p-value: < 2.2e-16
-betrouwbh = predict(logmodel, interval = "confidence", level = 0.95)
-predictie = predict(logmodel, interval = "prediction", level = 0.95)
+betrouwbh <- predict(logmodel, interval = "confidence", level = 0.95)
+predictie <- predict(logmodel, interval = "prediction", level = 0.95)
 plot(log10(realSum) ~ log10(attr))
 abline(logmodel, col='red')
-x_i = logmodel$model[,2]
+x_i <- logmodel$model[,2]
 lines(sort(x_i), betrouwbh[order(x_i), 2], col='blue')
 lines(sort(x_i), betrouwbh[order(x_i), 3], col='blue')
 lines(sort(x_i), predictie[order(x_i), 2], col='green')
@@ -310,6 +333,6 @@ model <- update(model, ~.-metro); summary(model)
 
 plot(model)
 
-logmodel <- lm(log10(realSum) ~ log10(dist) + log10(attr) + satisfaction); summary(logmodel)
+logmodel <- lm(log10(realSum) ~ log10(dist) + log10(attr) + exp(satisfaction)); summary(logmodel)
 plot(logmodel)
 
