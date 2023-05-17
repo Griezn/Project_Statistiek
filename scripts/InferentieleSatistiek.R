@@ -27,11 +27,13 @@ binom.test(part, length(realSum), 0.5)
 
 # controle als het aantal beschikbare kamers de poissonverdeling volgt
 lambda <- median(bedrooms)
-expected_freq <- dpois(0:5, lambda) / sum(expected_freq)
+expected_freq <- dpois(0:5, lambda)
+expected_freq <- expected_freq / sum(expected_freq)
 observed_freq <- table(bedrooms)
 
 chisq.test(observed_freq, p = expected_freq) # p-value < 2.2e-16
 chisq.test(observed_freq, p = expected_freq)$expected
+chisq.test(observed_freq, p=expected_freq)$residuals
 # p-waarde is zeer klein dus de h0 wordt verworpen, het aantal beschikbare kamers volgt niet de poissonverdeling
 # de expected values bij 0 zijn veel te hoog en bij 1 veel te laag, de andere waarden zijn ongeveer gelijk
 
@@ -41,7 +43,9 @@ chisq.test(observed_freq, p = expected_freq)$expected
 # dit zijn ongepaarde groepen
 max <- realSum[cleanliness == 10]
 rest <- realSum[cleanliness != 10]
-mean(max) - mean(rest)
+mean(max)
+mean(rest)
+abs(mean(max) - mean(rest))
 # controleren als de veranderlijken normaal verdeeld zijn
 hist(max)
 hist(rest)
@@ -70,7 +74,9 @@ qt(0.975, 959.48) # 1.96244
 # verschilt de kost als de eigeneer meer dan één woning aanbied
 enige <- realSum[host == "enige"]
 meerdere <- realSum[host != "enige"]
-mean(enige) - mean(meerdere)
+mean(enige)
+mean(meerdere)
+abs(mean(enige) - mean(meerdere))
 # het verschil in gemiddelden is significant anders van 0
 qqnorm(enige); qqline(enige)
 qqnorm(meerdere); qqline(meerdere)
@@ -99,7 +105,9 @@ qt(0.975, 551.88) # 1.964272
 table(room)
 volledig <- realSum[room == "volledig"]
 afzonderlijk <- realSum[room != "volledig"]
-mean(volledig) - mean(afzonderlijk)
+mean(volledig)
+mean(afzonderlijk)
+abs(mean(volledig) - mean(afzonderlijk))
 # Het verschil in gemiddelden is significant verschillend van 0
 qqnorm(volledig); qqline(volledig)
 qqnorm(volledig, ylim = range(0, 2000)); qqline(volledig)
@@ -334,5 +342,11 @@ model <- update(model, ~.-metro); summary(model)
 plot(model)
 
 logmodel <- lm(log10(realSum) ~ log10(dist) + log10(attr) + exp(satisfaction)); summary(logmodel)
+#Coefficients:
+#                    Estimate Std. Error t value Pr(>|t|)
+#(Intercept)        2.483e+00  4.151e-02  59.805  < 2e-16 ***
+#log10(dist)       -4.546e-02  4.173e-02  -1.089    0.276
+#log10(attr)        4.874e-01  8.583e-02   5.679 1.79e-08 ***
+#exp(satisfaction)  7.289e-06  1.114e-06   6.544 9.69e-11 ***
 plot(logmodel)
 
