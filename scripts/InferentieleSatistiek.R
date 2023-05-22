@@ -393,11 +393,25 @@ betas <- logmodel.room$coefficients; betas
 
 intercept <- c(betas[1], betas[1] + betas[5:6]); intercept
 
-slope <- c(betas[3], betas[3] + betas[9:10]); slope
+slope_dist <- c(betas[2], betas[2] + betas[7:8]); slope_dist
+slope_attr <- c(betas[3], betas[3] + betas[9:10]); slope_attr
+slope_satisfaction <- c(betas[4], betas[4] + betas[11:12]); slope_satisfaction
 
 plot(log10(realSum) ~ log10(attr), col = room)
 for (k in 1:3) {
-  abline(intercept[k], slope[k], col = k)
+  abline(intercept[k], slope_attr[k], col = k)
+}
+legend("topleft", legend = c("afzonderlijk", "gedeeld", "volledig"), col = 1:3, lty = 1, bty = "n")
+
+plot(log10(realSum) ~ log10(dist), col = room)
+for (k in 1:3) {
+  abline(intercept[k], slope_dist[k], col = k)
+}
+legend("topleft", legend = c("afzonderlijk", "gedeeld", "volledig"), col = 1:3, lty = 1, bty = "n")
+
+plot(log10(realSum) ~ exp(satisfaction), col = room)
+for (k in 1:3) {
+  abline(intercept[k], slope_satisfaction[k], col = k)
 }
 legend("topleft", legend = c("afzonderlijk", "gedeeld", "volledig"), col = 1:3, lty = 1, bty = "n")
 
