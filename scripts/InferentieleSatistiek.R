@@ -350,3 +350,54 @@ logmodel <- lm(log10(realSum) ~ log10(dist) + log10(attr) + exp(satisfaction)); 
 #exp(satisfaction)  7.289e-06  1.114e-06   6.544 9.69e-11 ***
 plot(logmodel)
 
+
+# nagaan of het zin heeft om afzonderlijke vergelijkingen te hanteren naargelang het een volledig verhuurde of niet volledig verhuurde woning betreft
+logmodel.room <- update(logmodel, ~.*room); summary(logmodel.room)
+#Coefficients:
+#                                     Estimate Std. Error t value Pr(>|t|)
+#(Intercept)                         2.598e+00  4.365e-02  59.529  < 2e-16 ***
+#log10(dist)                         2.121e-02  4.359e-02   0.487   0.6267
+#log10(attr)                         5.625e-01  8.838e-02   6.365 3.02e-10 ***
+#exp(satisfaction)                   2.627e-06  1.276e-06   2.059   0.0398 *
+#roomafzonderlijk                   -8.238e-02  7.463e-02  -1.104   0.2699
+#roomgedeeld                        -1.016e+00  8.947e-01  -1.135   0.2565
+#log10(dist):roomafzonderlijk       -1.884e-01  7.488e-02  -2.516   0.0120 *
+#log10(dist):roomgedeeld             6.301e-01  9.230e-01   0.683   0.4950
+#log10(attr):roomafzonderlijk       -3.624e-01  1.552e-01  -2.336   0.0197 *
+#log10(attr):roomgedeeld             9.858e-01  1.385e+00   0.712   0.4766
+#exp(satisfaction):roomafzonderlijk  1.683e-06  1.936e-06   0.869   0.3850
+#exp(satisfaction):roomgedeeld       8.861e-06  1.826e-05   0.485   0.6277
+
+anova(logmodel.room)
+#Response: log10(realSum)
+#                        Df  Sum Sq Mean Sq  F value    Pr(>F)
+#log10(dist)              1  7.5018  7.5018 262.0481 < 2.2e-16 ***
+#log10(attr)              1  1.3144  1.3144  45.9131 2.148e-11 ***
+#exp(satisfaction)        1  1.7291  1.7291  60.3998 1.977e-14 ***
+#room                     2 11.4378  5.7189 199.7708 < 2.2e-16 ***
+#log10(dist):room         2  0.0252  0.0126   0.4395   0.64447
+#log10(attr):room         2  0.1753  0.0877   3.0624   0.04723 * -> significant
+#exp(satisfaction):room   2  0.0273  0.0137   0.4769   0.62082
+#Residuals              965 27.6255  0.0286
+
+betas <- logmodel.room$coefficients; betas
+#(Intercept)                        log10(dist)                        log10(attr)
+#2.598150e+00                       2.120829e-02                       5.625165e-01
+#exp(satisfaction)                   roomafzonderlijk                        roomgedeeld
+#2.627196e-06                      -8.237942e-02                      -1.015786e+00
+#log10(dist):roomafzonderlijk            log10(dist):roomgedeeld       log10(attr):roomafzonderlijk
+#-1.883811e-01                       6.301221e-01                      -3.624138e-01
+#log10(attr):roomgedeeld exp(satisfaction):roomafzonderlijk      exp(satisfaction):roomgedeeld
+#9.858018e-01                       1.682917e-06                       8.860690e-06
+
+
+intercept <- c(betas[1], betas[1] + betas[5:6]); intercept
+
+slope <- c(betas[3], betas[3] + betas[9:10]); slope
+
+plot(log10(realSum) ~ log10(attr), col = room)
+for (k in 1:3) {
+  abline(intercept[k], slope[k], col = k)
+}
+legend("topleft", legend = c("afzonderlijk", "gedeeld", "volledig"), col = 1:3, lty = 1, bty = "n")
+
