@@ -18,11 +18,13 @@ qt(0.025, 976)
 
 
 # particuliere vs professionele
-table(host)
-part <- length(realSum[host == "enige"])
-
-# p is zeer klein (p-value < 2.2e-16) dus significant meer dan de helft is particulier
-binom.test(part, length(realSum), 0.5)
+host2 <- as.character(host)
+host2[host2 == "enige"] <- "particulier"
+host2[host2 != "particulier"] <- "professioneel"
+t_h <- table(host2)
+#  particulier professioneel
+#          636           341
+prop.test(t_h, alternative = "two.sided") # p-value < 2.2e-16
 
 
 # controle als het aantal beschikbare kamers de poissonverdeling volgt
